@@ -20,6 +20,7 @@ const List = () => {
           key={contact.id}
           name={contact.name}
           avatar={contact.avatar}
+          id={contact.id}
         />
       ))}
     </View>

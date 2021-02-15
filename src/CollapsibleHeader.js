@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 export default function CollapsibleHeader(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const {layoutHeight, stickyHeight} = state;
-  const {scrollY, onLayout: onLayoutParent, diff} = props;
+  const {scrollY, onLayout: onLayoutParent} = props;
   const onLayout = useComponentLayout(
     (height, y) =>
       dispatch({

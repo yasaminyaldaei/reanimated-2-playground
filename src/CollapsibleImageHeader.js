@@ -7,6 +7,7 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import useComponentLayout from './useComponentLayout';
+import NavBar from './Navbar';
 
 function CollapsibleImageHeader({
   avatar,
@@ -16,6 +17,7 @@ function CollapsibleImageHeader({
 }) {
   const [layoutHeight, setLayoutHeight] = useState(0);
   const [stickyHeight, setStickyHeight] = useState(0);
+  const [nabvarHeight, setNavbarHeight] = useState(0);
   const onImageLayout = useComponentLayout(setLayoutHeight, onLayout);
 
   useEffect(() => {
@@ -31,11 +33,20 @@ function CollapsibleImageHeader({
     );
   });
 
+  const separatorOpacity = useDerivedValue(() => {
+    return interpolate(
+      scrollY.value,
+      [0, layoutHeight],
+      [0, 0.3],
+      Extrapolate.CLAMP,
+    );
+  });
+
   const translateY = useDerivedValue(() => {
     return interpolate(
       scrollY.value,
-      [0, layoutHeight - stickyHeight],
-      [0, -(layoutHeight - stickyHeight)],
+      [0, layoutHeight - stickyHeight - nabvarHeight],
+      [0, -(layoutHeight - stickyHeight - nabvarHeight)],
       Extrapolate.CLAMP,
     );
   });
@@ -48,13 +59,20 @@ function CollapsibleImageHeader({
     return {opacity: opacity.value};
   });
 
+  const separatorAnimation = useAnimatedStyle(() => {
+    return {opacity: separatorOpacity.value};
+  });
+
   return (
-    <Animated.View style={[styles.container, viewAnimation]}>
+    <Animated.View
+      onLayout={onImageLayout}
+      style={[styles.container, viewAnimation]}>
       <Animated.Image
-        onLayout={onImageLayout}
         source={{uri: avatar}}
         style={[styles.image, imageAnimation]}
       />
+      <Animated.View style={[styles.separator, separatorAnimation]} />
+      <NavBar onLayout={setNavbarHeight} />
     </Animated.View>
   );
 }
@@ -70,6 +88,11 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 300,
+  },
+  separator: {
+    height: 1,
+    flex: 1,
+    backgroundColor: 'dimgray',
   },
 });
 

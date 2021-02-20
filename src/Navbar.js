@@ -1,30 +1,41 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, FlatList} from 'react-native';
+import useComponentLayout from './useComponentLayout';
 
-const TABS = ['Chats'];
+const TABS = [
+  {
+    title: 'Section 1',
+    key: 0,
+  },
+  {
+    title: 'Section 2',
+    key: 1,
+  },
+  {
+    title: 'Section 3',
+    key: 2,
+  },
+];
 
 const NavBar = ({onLayout}) => {
   const [selected, setSelected] = useState(0);
-  const onViewLayout = ({
-    nativeEvent: {
-      layout: {height},
-    },
-  }) => {
-    onLayout && onLayout(height);
-  };
+  const onViewLayout = useComponentLayout(null, onLayout);
   return (
     <View style={styles.container} onLayout={onViewLayout}>
-      {TABS.map((tab, index) => (
-        <View key={'' + index}>
+      <FlatList
+        horizontal
+        data={TABS}
+        keyExtractor={(item) => '' + item.key}
+        renderItem={({item, index}) => (
           <Text
             style={[
               styles.tab,
               selected === index ? styles.selectedTab : null,
             ]}>
-            {tab}
+            {item.title}
           </Text>
-        </View>
-      ))}
+        )}
+      />
     </View>
   );
 };
@@ -39,6 +50,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'white',
     padding: 10,
+    marginRight: 10,
   },
   selectedTab: {
     borderBottomWidth: 3,
